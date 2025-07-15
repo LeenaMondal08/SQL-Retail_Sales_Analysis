@@ -79,5 +79,20 @@ select transactions_id from retail_sales where total_sale>1000;
 
 select category, gender,count(*) from retail_sales group by category,gender order by 1;
 
--- find the avg sale for each, month
+-- find the avg sale for each  year, month, find out the best selling month in each year
 
+select
+extract(year from to_date(sale_date,'dd-mm-yyyy')) as year,
+extract(month from to_date(sale_date,'dd-mm-yyyy')) as month,
+round(avg(total_sale),2) as total 
+from retail_sales group by extract(year from to_date(sale_date,'dd-mm-yyyy')),extract(month from to_date(sale_date,'dd-mm-yyyy'))
+order by extract(year from to_date(sale_date,'dd-mm-yyyy')), round(avg(total_sale),2) desc;
+
+--select top 5 customers best on the highest sale
+select * from (SELECT customer_id, SUM(total_sale) AS total
+FROM retail_sales
+GROUP BY customer_id
+ORDER BY total DESC )where rownum<=5;
+
+--to find the unique customer who purchest item from each category
+select category , count(Distinct customer_id) from retail_sales group by category;
